@@ -167,6 +167,23 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: 'Restocking',
+    budget: 'Available Budget',
+    leadTime: 'Delivery Lead Time (days)',
+    recommendations: 'Recommended Items',
+    totalCost: 'Total Cost',
+    remaining: 'Remaining Budget',
+    placeOrder: 'Place Order',
+    orderPlaced: 'Order Placed',
+    toOrder: 'Qty to Order',
+    submittedOrders: 'Submitted Restocking Orders',
+    noOrders: 'No restocking orders submitted yet.',
+    leadTimeDays: 'Lead Time',
+    expectedDelivery: 'Expected Delivery'
+  },
+
   // Demand Forecast
   demand: {
     title: 'Demand Forecast',
