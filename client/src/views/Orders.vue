@@ -9,6 +9,7 @@
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <div class="stats-grid">
+
         <div class="stat-card success">
           <div class="stat-label">{{ t('status.delivered') }}</div>
           <div class="stat-value">{{ getOrdersByStatus('Delivered').length }}</div>
@@ -74,6 +75,44 @@
           </table>
         </div>
       </div>
+
+      <!-- Restocking orders submitted from the Restocking page -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">{{ t('restocking.submittedOrders') }}</h3>
+        </div>
+        <div v-if="restockingOrders.length === 0" class="restocking-empty">
+          {{ t('restocking.noOrders') }}
+        </div>
+        <div v-else class="table-container">
+          <table class="restocking-orders-table">
+            <thead>
+              <tr>
+                <th class="col-rst-id">Order ID</th>
+                <th class="col-rst-date">Date Placed</th>
+                <th class="col-rst-items">Items</th>
+                <th class="col-rst-lead">Lead Time</th>
+                <th class="col-rst-delivery">{{ t('restocking.expectedDelivery') }}</th>
+                <th class="col-rst-cost">Total Cost</th>
+                <th class="col-rst-status">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="rst in restockingOrders" :key="rst.id">
+                <td class="col-rst-id"><strong>{{ rst.id }}</strong></td>
+                <td class="col-rst-date">{{ formatDate(rst.created_date) }}</td>
+                <td class="col-rst-items">{{ rst.items.length }} items</td>
+                <td class="col-rst-lead">{{ rst.lead_time_days }} days</td>
+                <td class="col-rst-delivery">{{ formatDate(rst.expected_delivery) }}</td>
+                <td class="col-rst-cost"><strong>${{ rst.total_cost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</strong></td>
+                <td class="col-rst-status">
+                  <span class="badge warning">Submitted</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -95,6 +134,7 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+    const restockingOrders = ref([])
 
     // Use shared filters
     const {
@@ -153,13 +193,26 @@ export default {
       })
     }
 
-    onMounted(loadOrders)
+    const loadRestockingOrders = async () => {
+      try {
+        restockingOrders.value = await api.getRestockingOrders()
+      } catch (err) {
+        // Non-blocking: restocking orders section simply stays empty on error
+        console.error('Failed to load restocking orders:', err)
+      }
+    }
+
+    onMounted(() => {
+      loadOrders()
+      loadRestockingOrders()
+    })
 
     return {
       t,
       loading,
       error,
       orders,
+      restockingOrders,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
@@ -275,5 +328,27 @@ export default {
 .item-meta {
   font-size: 0.813rem;
   color: #64748b;
+}
+
+/* Restocking orders table */
+.restocking-orders-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.col-rst-id       { width: 220px; }
+.col-rst-date     { width: 130px; }
+.col-rst-items    { width: 90px; }
+.col-rst-lead     { width: 110px; }
+.col-rst-delivery { width: 130px; }
+.col-rst-cost     { width: 130px; }
+.col-rst-status   { width: 110px; }
+
+/* Empty state for restocking orders */
+.restocking-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.938rem;
 }
 </style>

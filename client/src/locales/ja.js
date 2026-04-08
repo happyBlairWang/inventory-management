@@ -167,6 +167,23 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: '補充発注',
+    budget: '利用可能予算',
+    leadTime: '納期リードタイム（日）',
+    recommendations: '推奨品目',
+    totalCost: '合計費用',
+    remaining: '残予算',
+    placeOrder: '発注する',
+    orderPlaced: '発注完了',
+    toOrder: '発注数量',
+    submittedOrders: '送信済み補充発注',
+    noOrders: '補充発注はまだありません。',
+    leadTimeDays: 'リードタイム',
+    expectedDelivery: '予定納期'
+  },
+
   // Demand Forecast
   demand: {
     title: '需要予測',
